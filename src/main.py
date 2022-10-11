@@ -37,9 +37,13 @@ async def activate_app(ctx, member : discord.Member, *, message):
     await member.send(f"{ctx.author}: {message}")
 
 async def user_communicate(user : discord.Member):
-    with open('C:/Users/hgold/PycharmProjects/bot_app/src/utils/quest_ans.json') as f:
+    with open('C:/Users/hgold/PycharmProjects/bot_app/src/utils/quest_ans.json', encoding='utf-8') as f:
         data = json.load(f)
+        embed = discord.Embed(title="Mod Application Format")
+        embed.add_field(name="Questions", value=data["total"])
+
         await user.send(data["total"])
+        await user.send(data["rest"])
 
 
 class MySelect(View):
