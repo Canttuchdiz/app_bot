@@ -37,7 +37,7 @@ async def activate_app(ctx, member : discord.Member, *, message):
     await member.send(f"{ctx.author}: {message}")
 
 async def user_callback(user : discord.Member):
-    with open('C:/Users/hgold/PycharmProjects/app_bot/src/utils/quest_ans.json', encoding='utf-8') as f:
+    with open('utils/quest_ans.json', encoding='utf-8') as f:
         data = json.load(f)
         answers = []
         for i in range(len(data)):
