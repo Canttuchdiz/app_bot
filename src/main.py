@@ -1,9 +1,8 @@
 import discord
 from dotenv import load_dotenv
 import random
-import aiohttp
 import datetime
-import asyncio
+from asyncio import sleep
 import json
 import os
 from discord.ext import commands, tasks
@@ -12,6 +11,7 @@ from discord.ui import Select, View
 load_dotenv()
 
 TOKEN = os.getenv("token")
+answer_channel = os.getenv("channelid")
 
 intents = discord.Intents.default()
 intents.members = True
@@ -36,14 +36,17 @@ async def ping(ctx, *, question=None):
 async def activate_app(ctx, member : discord.Member, *, message):
     await member.send(f"{ctx.author}: {message}")
 
-async def user_communicate(user : discord.Member):
-    with open('C:/Users/hgold/PycharmProjects/bot_app/src/utils/quest_ans.json', encoding='utf-8') as f:
+async def user_callback(user : discord.Member):
+    with open('C:/Users/hgold/PycharmProjects/app_bot/src/utils/quest_ans.json', encoding='utf-8') as f:
         data = json.load(f)
-        embed = discord.Embed(title="Mod Application Format")
-        embed.add_field(name="Questions", value=data["total"])
+        answers = []
+        for i in range(len(data)):
+            response = await user.send(data[i])
+            if i != len(data) - 1:
+                msg = await client.wait_for('message', check=lambda m: m.author == user)
+                answers.append(msg.content)
+        return answers
 
-        await user.send(data["total"])
-        await user.send(data["rest"])
 
 
 class MySelect(View):
@@ -57,9 +60,16 @@ class MySelect(View):
 
     async def select_callback(self, interaction, select):
         if select.values[0] == "1":
-            await user_communicate(interaction.user)
+            channel = client.get_channel(int(answer_channel))
+            answer_data = await user_callback(interaction.user)
+            em = discord.Embed(color=discord.Color.blue(), title="Mod Apps", description=f"User {interaction.user}")
+            for i in range(len(answer_data)):
+                em.add_field(name=f"Question {i}", value=answer_data[i])
+            await channel.send(embed=em)
 
-@client.command()
+
+
+@client.command(aliases=['dropdown'])
 async def menu(ctx):
     view = MySelect()
     await ctx.send(view=view)
