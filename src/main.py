@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import random
 import datetime
 from asyncio import sleep
+import aiofiles
 import json
 import os
 from discord.ext import commands, tasks
@@ -37,13 +38,14 @@ async def activate_app(ctx, member : discord.Member, *, message):
     await member.send(f"{ctx.author}: {message}")
 
 async def user_callback(user : discord.Member):
-    with open('utils/quest_ans.json', encoding='utf-8') as f:
-        data = json.load(f)
+    async with aiofiles.open('utils/quest_ans.json', encoding='utf-8') as f:
+        content = await f.read()
+        data = json.loads(content)
         answers = []
         for i in range(len(data)):
             em = discord.Embed(color=discord.Color.red())
             em.add_field(name=f"Question {i + 1}", value=data[i])
-            await user.send()
+            await user.send(embed=em)
             if i != len(data) - 1:
                 msg = await client.wait_for('message', check=lambda m: m.author == user)
                 answers.append(msg.content)
@@ -51,29 +53,25 @@ async def user_callback(user : discord.Member):
 
 
 
-class MySelect(View):
+class Menu(View):
 
-    @discord.ui.select(
-        placeholder="Which application do you want to complete",
-        options=[discord.SelectOption(label="Mod App", value="1", description="Sends application to user"),
-                 discord.SelectOption(label="Edited message", value="2", description="This is an edited message"),
-                 discord.SelectOption(label="Normal Message", value="3", description="This is an normal message")
-                 ])
+    def __init__(self):
+        super().__init__()
+        self.value = None
 
-    async def select_callback(self, interaction, select):
-        if select.values[0] == "1":
-            channel = client.get_channel(int(answer_channel))
-            answer_data = await user_callback(interaction.user)
-            em = discord.Embed(color=discord.Color.blue(), title="Mod Apps", description=f"User {interaction.user}")
-            for i in range(len(answer_data)):
-                em.add_field(name=f"Question {i}", value=answer_data[i])
-            await channel.send(embed=em)
-
+    @discord.ui.button(label="Mod Application", style=discord.ButtonStyle.green)
+    async def menu1(self, interaction : discord.Interaction, button: discord.ui.Button):
+        channel = client.get_channel(int(answer_channel))
+        answer_data = await user_callback(interaction.user)
+        em = discord.Embed(color=discord.Color.blue(), title="Mod Apps", description=f"User {interaction.user}")
+        for i in range(len(answer_data)):
+            em.add_field(name=f"Question {i}", value=answer_data[i])
+        await channel.send(embed=em)
 
 
 @client.command(aliases=['dropdown'])
 async def menu(ctx):
-    view = MySelect()
+    view = Menu()
     await ctx.send(view=view)
 
 client.run(TOKEN)
