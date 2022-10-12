@@ -41,7 +41,9 @@ async def user_callback(user : discord.Member):
         data = json.load(f)
         answers = []
         for i in range(len(data)):
-            response = await user.send(data[i])
+            em = discord.Embed(color=discord.Color.red())
+            em.add_field(name=f"Question {i + 1}", value=data[i])
+            await user.send()
             if i != len(data) - 1:
                 msg = await client.wait_for('message', check=lambda m: m.author == user)
                 answers.append(msg.content)
