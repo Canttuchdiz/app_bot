@@ -32,7 +32,7 @@ async def on_ready():
 async def ping(ctx, *, question=None):
     await ctx.send('Pong! {0}'.format(round(client.latency, 1)))
 
-@client.command
+@client.command(aliases=['dio'])
 async def world(ctx):
     await ctx.send("ZA WARUDO! TOKI WA TOMARE! ||GIORNO STALEMATES GOKU||")
 
@@ -71,7 +71,7 @@ class Menu(View):
 
 
 @commands.check_any(commands.is_owner(), commands.has_role('Senior Staff Team'))
-@client.command(aliases=['button'])
+@client.command(aliases=['button', 'apps'])
 async def menu(ctx):
     view = Menu()
     await ctx.send(view=view)
