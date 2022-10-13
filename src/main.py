@@ -42,13 +42,14 @@ async def user_callback(user : discord.Member):
         content = await f.read()
         data = json.loads(content)
         answers = []
-        for i in range(len(data)):
+        for i in range(len(data) - 1):
             em = discord.Embed(color=discord.Color.red())
             em.add_field(name=f"Question {i + 1}", value=data[i])
             await user.send(embed=em)
-            if i != len(data) - 1:
-                msg = await client.wait_for('message', check=lambda m: m.author == user)
-                answers.append(msg.content)
+            msg = await client.wait_for('message', check=lambda m: m.author == user)
+            answers.append(msg.content)
+        fem = discord.Embed(color=discord.Color.green())
+        fem.add_field(name="Congratulations!", value=data[len(data) - 1])
         return answers
 
 
@@ -61,6 +62,7 @@ class Menu(View):
 
     @discord.ui.button(label="Mod Application", style=discord.ButtonStyle.green)
     async def menu1(self, interaction : discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Application sent to your dms :)", ephemeral=True)
         channel = client.get_channel(int(answer_channel))
         answer_data = await user_callback(interaction.user)
         em = discord.Embed(color=discord.Color.blue(), title="Mod Apps", description=f"User {interaction.user}")
@@ -69,7 +71,7 @@ class Menu(View):
         await channel.send(embed=em)
 
 
-@client.command(aliases=['dropdown'])
+@client.command(aliases=['button'])
 async def menu(ctx):
     view = Menu()
     await ctx.send(view=view)
