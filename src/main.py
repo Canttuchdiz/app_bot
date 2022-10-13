@@ -34,7 +34,7 @@ async def ping(ctx, *, question=None):
 
 @client.command(aliases=['dio'])
 async def world(ctx):
-    await ctx.send("ZA WARUDO! TOKI WA TOMARE! ||GIORNO STALEMATES GOKU||")
+    await ctx.send("ZA WARUDO! TOKI WA TOMARE! ||Naruto and Sasuke obliterate Dio + Goku||")
 
 async def user_callback(user : discord.Member):
     async with aiofiles.open('utils/quest_ans.json', encoding='utf-8') as f:
@@ -60,7 +60,7 @@ class Menu(View):
         super().__init__()
         self.value = None
 
-    @discord.ui.button(label="Mod Application", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Staff Application", style=discord.ButtonStyle.red)
     async def menu1(self, interaction : discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_message("Application sent to your dms :)", ephemeral=True)
         channel = client.get_channel(int(answer_channel))
