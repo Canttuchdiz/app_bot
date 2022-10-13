@@ -25,7 +25,7 @@ client = commands.Bot(command_prefix='!', intents=intents)
 @client.event
 async def on_ready():
     print("Bot is ready.")
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Cube Corp."), status=discord.Status.do_not_disturb)
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Cube Incorporation"), status=discord.Status.do_not_disturb)
 
 
 @client.command(aliases=['pingpong'])
@@ -49,6 +49,7 @@ async def user_callback(user : discord.Member):
             answers.append(msg.content)
         fem = discord.Embed(color=discord.Color.green())
         fem.add_field(name="Congratulations!", value=data[len(data) - 1])
+        await user.send(embed=fem)
         return answers
 
 
@@ -64,7 +65,7 @@ class Menu(View):
         await interaction.response.send_message("Application sent to your dms :)", ephemeral=True)
         channel = client.get_channel(int(answer_channel))
         answer_data = await user_callback(interaction.user)
-        em = discord.Embed(color=discord.Color.blue(), title="Mod Apps", description=f"User {interaction.user}")
+        em = discord.Embed(color=discord.Color.blue(), title="Mod Apps", description=f"User {interaction.user} ({interaction.user.id})")
         for i in range(len(answer_data)):
             em.add_field(name=f"Question {i}", value=answer_data[i])
         await channel.send(embed=em)
