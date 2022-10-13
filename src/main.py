@@ -70,7 +70,7 @@ class Menu(View):
         await channel.send(embed=em)
 
 
-@commands.has_role('Senior Staff Team')
+@commands.check_any(commands.is_owner(), commands.has_role('Senior Staff Team'))
 @client.command(aliases=['button'])
 async def menu(ctx):
     view = Menu()
