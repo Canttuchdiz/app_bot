@@ -32,10 +32,9 @@ async def on_ready():
 async def ping(ctx, *, question=None):
     await ctx.send('Pong! {0}'.format(round(client.latency, 1)))
 
-
-@client.command()
-async def activate_app(ctx, member : discord.Member, *, message):
-    await member.send(f"{ctx.author}: {message}")
+@client.command
+async def world(ctx):
+    await ctx.send("ZA WARUDO! TOKI WA TOMARE! ||GIORNO STALEMATES GOKU||")
 
 async def user_callback(user : discord.Member):
     async with aiofiles.open('utils/quest_ans.json', encoding='utf-8') as f:
@@ -71,6 +70,7 @@ class Menu(View):
         await channel.send(embed=em)
 
 
+@commands.has_role('Senior Staff Team')
 @client.command(aliases=['button'])
 async def menu(ctx):
     view = Menu()
