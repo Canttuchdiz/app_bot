@@ -8,7 +8,7 @@ import json
 import os
 from discord.ext import commands, tasks
 from discord.ui import Select, View
-from .utils.tools import util as tools
+import util
 
 load_dotenv()
 
@@ -43,7 +43,7 @@ async def dm(ctx):
 
 async def user_callback(user : discord.Member):
 
-        data = tools.EasyJson.json_retriever('utils/quest_ans.json')
+        data = util.EasyJson.json_retriever('utils/quest_ans.json')
         answers = []
         for i in range(len(data) - 1):
             em = discord.Embed(color=discord.Color.red())
@@ -56,18 +56,22 @@ async def user_callback(user : discord.Member):
         await user.send(embed=fem)
         return answers
 
+@commands.check(util.UserCheck.is_user)
+@client.command()
+async def fart(ctx):
+    await ctx.send("HAHAHAH THAT WAS FUNNY")
 
-@commands.check_any(commands.is_owner(), commands.has_role('Senior Staff Team'))
+@commands.check_any(commands.is_owner(), commands.has_role('Senior Staff Team'), util.UserCheck.is_user)
 @client.command()
 async def eventstart(ctx):
-    id_list = tools.EasyJson.json_retriever('utils/id_data.json')
+    id_list = util.EasyJson.json_retriever('utils/id_data.json')
     for id in id_list:
         await client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=False)
 
 @commands.check_any(commands.is_owner(), commands.has_role('Senior Staff Team'))
 @client.command()
 async def eventend(ctx):
-    id_list = tools.EasyJson.json_retriever('utils/id_data.json')
+    id_list = util.EasyJson.json_retriever('utils/id_data.json')
     for id in id_list:
         await client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=True)
 

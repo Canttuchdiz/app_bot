@@ -8,3 +8,9 @@ class EasyJson:
         async with aiofiles.open(path, encoding='utf-8') as f:
             content = await f.read()
             return json.loads(content)
+
+class UserCheck:
+
+    @staticmethod
+    def is_user(ctx) -> bool:
+        return ctx.author.id == 520741459478052886
