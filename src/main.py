@@ -8,6 +8,7 @@ import json
 import os
 from discord.ext import commands, tasks
 from discord.ui import Select, View
+from .utils.tools import util as tools
 
 load_dotenv()
 
@@ -41,9 +42,8 @@ async def dm(ctx):
     await ctx.reply('https://www.youtube.com/watch?v=Jmq91taUy-A')
 
 async def user_callback(user : discord.Member):
-    async with aiofiles.open('utils/quest_ans.json', encoding='utf-8') as f:
-        content = await f.read()
-        data = json.loads(content)
+
+        data = tools.EasyJson.json_retriever('utils/quest_ans.json')
         answers = []
         for i in range(len(data) - 1):
             em = discord.Embed(color=discord.Color.red())
@@ -57,6 +57,19 @@ async def user_callback(user : discord.Member):
         return answers
 
 
+@commands.check_any(commands.is_owner(), commands.has_role('Senior Staff Team'))
+@client.command()
+async def eventstart(ctx):
+    id_list = tools.EasyJson.json_retriever('utils/id_data.json')
+    for id in id_list:
+        await client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=False)
+
+@commands.check_any(commands.is_owner(), commands.has_role('Senior Staff Team'))
+@client.command()
+async def eventend(ctx):
+    id_list = tools.EasyJson.json_retriever('utils/id_data.json')
+    for id in id_list:
+        await client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=True)
 
 class Menu(View):
 
@@ -75,7 +88,6 @@ class Menu(View):
         await channel.send(embed=em)
 
 
-@commands.check_any(commands.is_owner(), commands.has_role('Senior Staff Team'))
 @client.command(aliases=['button', 'apps'])
 async def menu(ctx):
     view = Menu()
