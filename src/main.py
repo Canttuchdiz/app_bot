@@ -61,7 +61,7 @@ async def user_callback(user : discord.Member):
 class Menu(View):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(timeout=None)
         self.value = None
 
     @discord.ui.button(label="Staff Application", style=discord.ButtonStyle.red)
