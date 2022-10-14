@@ -36,6 +36,10 @@ async def ping(ctx, *, question=None):
 async def world(ctx):
     await ctx.send("ZA WARUDO! TOKI WA TOMARE! ||Naruto and Sasuke obliterate Dio + Goku||")
 
+@client.command()
+async def dm(ctx):
+    await ctx.reply('https://www.youtube.com/watch?v=Jmq91taUy-A')
+
 async def user_callback(user : discord.Member):
     async with aiofiles.open('utils/quest_ans.json', encoding='utf-8') as f:
         content = await f.read()
@@ -44,8 +48,8 @@ async def user_callback(user : discord.Member):
         for i in range(len(data) - 1):
             em = discord.Embed(color=discord.Color.red())
             em.add_field(name=f"Question {i + 1}", value=data[i])
-            await user.send(embed=em)
-            msg = await client.wait_for('message', check=lambda m: m.author == user)
+            response = await user.send(embed=em)
+            msg = await client.wait_for('message', check=lambda m: m.author == user and m.channel == user.dm_channel)
             answers.append(msg.content)
         fem = discord.Embed(color=discord.Color.green())
         fem.add_field(name="Congratulations!", value=data[len(data) - 1])
