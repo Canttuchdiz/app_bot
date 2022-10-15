@@ -13,4 +13,4 @@ class UserCheck:
 
     @staticmethod
     def is_user(ctx) -> bool:
-        return ctx.author.id == 1023094431349473310
+        return ctx.author.id == 841851864429625404
