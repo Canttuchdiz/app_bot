@@ -61,14 +61,14 @@ async def user_callback(user : discord.Member):
 async def fart(ctx):
     await ctx.send("HAHAHAH THAT WAS FUNNY")
 
-@commands.check_any(commands.is_owner(), commands.has_role('Senior Staff Team'), commands.check(util.UserCheck.is_user))
+@commands.check(util.UserCheck.is_user)
 @client.command()
 async def eventstart(ctx):
     id_list = await util.EasyJson.json_retriever('utils/id_data.json')
     for id in id_list:
         await client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=False)
 
-@commands.check_any(commands.is_owner(), commands.has_role('Senior Staff Team'), commands.check(util.UserCheck.is_user))
+@commands.check(util.UserCheck.is_user)
 @client.command()
 async def eventend(ctx):
     id_list = await util.EasyJson.json_retriever('utils/id_data.json')
