@@ -43,7 +43,7 @@ async def dm(ctx):
 
 async def user_callback(user : discord.Member):
 
-        data = util.EasyJson.json_retriever('utils/quest_ans.json')
+        data = await util.UtilMethods.json_retriever('utils/quest_ans.json')
         answers = []
         for i in range(len(data) - 1):
             em = discord.Embed(color=discord.Color.red())
@@ -56,22 +56,30 @@ async def user_callback(user : discord.Member):
         await user.send(embed=fem)
         return answers
 
-@commands.check(util.UserCheck.is_user)
+@commands.check(util.UtilMethods.is_user)
 @client.command()
 async def fart(ctx):
     await ctx.send("HAHAHAH THAT WAS FUNNY")
 
-@commands.check(util.UserCheck.is_user)
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        pass
+    if isinstance(error, commands.MissingPermissions):
+        await ctx.send(f"You are missing permissions for this command.")
+
+
+@commands.check(util.UtilMethods)
 @client.command()
 async def eventstart(ctx):
-    id_list = await util.EasyJson.json_retriever('utils/id_data.json')
+    id_list = await util.UtilMethods.json_retriever('utils/id_data.json')
     for id in id_list:
         await client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=False)
 
-@commands.check(util.UserCheck.is_user)
+@commands.check(util.UtilMethods.is_user)
 @client.command()
 async def eventend(ctx):
-    id_list = await util.EasyJson.json_retriever('utils/id_data.json')
+    id_list = await util.UtilMethods.json_retriever('utils/id_data.json')
     for id in id_list:
         await client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=True)
 
@@ -92,6 +100,7 @@ class Menu(View):
         await channel.send(embed=em)
 
 
+@commands.check_any(commands.check(util.UtilMethods.is_user), commands.has_role("Senior Staff Team"), commands.is_owner())
 @client.command(aliases=['button', 'apps'])
 async def menu(ctx):
     view = Menu()
