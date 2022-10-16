@@ -69,7 +69,7 @@ async def on_command_error(ctx, error):
         await ctx.send(f"You are missing permissions for this command.")
 
 
-@commands.check(util.UtilMethods)
+@commands.check(util.UtilMethods.is_user)
 @client.command()
 async def eventstart(ctx):
     id_list = await util.UtilMethods.json_retriever('utils/id_data.json')
