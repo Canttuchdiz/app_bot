@@ -70,7 +70,7 @@ async def on_command_error(ctx, error):
 
 
 @commands.check(util.UtilMethods.is_user)
-@client.command()
+@client.command(aliases=['thanossnap'])
 async def eventstart(ctx):
     id_list = await util.UtilMethods.json_retriever('utils/id_data.json')
     for id in id_list:
