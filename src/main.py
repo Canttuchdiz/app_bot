@@ -1,22 +1,8 @@
-import discord
-from dotenv import load_dotenv
-import random
-import datetime
-from asyncio import sleep
-import aiofiles
-import json
-import os
-from discord.ext import commands, tasks
-from discord.ui import Select, View
-import util
-import traceback
-import sys
+from imports import *
 
 load_dotenv()
 
-TOKEN = os.getenv("token")
-answer_channel : int = os.getenv("channelid")
-channel_20 : int = os.getenv("channelid2")
+TOKEN : str = os.getenv("token")
 
 intents = discord.Intents.default()
 intents.members = True
@@ -24,116 +10,20 @@ intents.messages = True
 intents.message_content = True
 intents.bans = True
 
-client = commands.Bot(command_prefix='!', intents=intents)
 
-@client.event
-async def on_ready():
-    print("Bot is ready.")
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Cube Incorporation"), status=discord.Status.do_not_disturb)
+class Bot(commands.Bot):
 
-
-@client.command(aliases=['pingpong'])
-async def ping(ctx, *, question=None):
-    await ctx.send('Pong! {0}'.format(round(client.latency, 1)))
-
-@client.command(aliases=['dio'])
-async def world(ctx):
-    await ctx.send("ZA WARUDO! TOKI WA TOMARE! ||Naruto and Sasuke obliterate Dio + Goku||")
-
-@client.command()
-async def dm(ctx):
-    await ctx.reply('https://www.youtube.com/watch?v=Jmq91taUy-A')
-
-async def user_callback(user : discord.Member):
-
-        data = await util.UtilMethods.json_retriever('utils/quest_ans.json')
-        answers = []
-        for i in range(len(data) - 1):
-            em = discord.Embed(color=discord.Color.red())
-            em.add_field(name=f"Question {i + 1}", value=data[i])
-            response = await user.send(embed=em)
-            msg = await client.wait_for('message', check=lambda m: m.author == user and m.channel == user.dm_channel)
-            answers.append(msg.content)
-        fem = discord.Embed(color=discord.Color.green())
-        fem.add_field(name="Congratulations!", value=data[len(data) - 1])
-        await user.send(embed=fem)
-        return answers
-
-@commands.check(util.UtilMethods.is_user)
-@client.command()
-async def fart(ctx):
-    await ctx.send("HAHAHAH THAT WAS FUNNY")
-
-@client.event
-async def on_command_error(ctx, error):
-    ignored = (commands.CommandNotFound, )
-
-        # Anything in ignored will return and prevent anything happening.
-    if isinstance(error, ignored):
-        return
-
-    if isinstance(error, commands.DisabledCommand):
-        await ctx.send(f'{ctx.command} has been disabled.')
-
-    elif isinstance(error, commands.NoPrivateMessage):
-        try:
-            await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')
-        except discord.HTTPException:
-            pass
-
-        # For this error example we check to see where it came from...
-    elif isinstance(error, commands.BadArgument):
-        if ctx.command.qualified_name == 'tag list':  # Check if the command being invoked is 'tag list'
-            await ctx.send('I could not find that member. Please try again.')
-
-    else:
-            # All other Errors not returned come here. And we can just print the default TraceBack.
-        print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-
-    """Below is an example of a Local Error Handler for our command do_repeat"""
-
-
-@commands.check(util.UtilMethods.is_user)
-@client.command(aliases=['thanossnap'])
-async def eventstart(ctx):
-    id_list = await util.UtilMethods.json_retriever('utils/id_data.json')
-    channel_lvl = client.get_channel(int(channel_20))
-    for id in id_list:
-        await client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=False)
-    await channel_lvl.set_permissions(ctx.guild.get_role(942240986103443506), view_channel=False)
-
-@commands.check(util.UtilMethods.is_user)
-@client.command()
-async def eventend(ctx):
-    id_list = await util.UtilMethods.json_retriever('utils/id_data.json')
-    channel_lvl = client.get_channel(int(channel_20))
-    for id in id_list:
-        await client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=True)
-    await channel_lvl.set_permissions(ctx.guild.get_role(942240986103443506), view_channel=True)
-
-
-class Menu(View):
-
+    # Initializes needed data
     def __init__(self):
-        super().__init__(timeout=None)
-        self.value = None
+        super().__init__(command_prefix='!', intents=intents)
+        self.initial_extentsions = ['cogs.events', 'cogs.easter_eggs', 'cogs.commands', 'cogs.interactions']
 
-    @discord.ui.button(label="Staff Application", style=discord.ButtonStyle.red)
-    async def menu1(self, interaction : discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_message("Application sent to your dms :)", ephemeral=True)
-        channel = client.get_channel(int(answer_channel))
-        answer_data = await user_callback(interaction.user)
-        em = discord.Embed(color=discord.Color.blue(), title="Mod Apps", description=f"User {interaction.user} ({interaction.user.id})")
-        for i in range(len(answer_data)):
-            em.add_field(name=f"Question {i}", value=answer_data[i])
-        await channel.send(embed=em)
+    # Loading all cogs
+    async def setup_hook(self):
+        for extentsions in self.initial_extentsions:
+            await self.load_extension(extentsions)
 
-
-@commands.check_any(commands.check(util.UtilMethods.is_user), commands.has_role("Senior Staff Team"), commands.is_owner())
-@client.command(aliases=['button', 'apps'])
-async def menu(ctx):
-    view = Menu()
-    await ctx.send(view=view)
+# Creates instance of the bot and then runs it
+client = Bot()
 
 client.run(TOKEN)

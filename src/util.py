@@ -3,6 +3,8 @@ import json
 
 class UtilMethods:
 
+    # Contains methods that I will use to reduce redundancy
+
     @staticmethod
     def is_user(ctx) -> bool:
         id_list = [520741459478052886, 841851864429625404]
