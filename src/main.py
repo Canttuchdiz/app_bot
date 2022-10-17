@@ -15,7 +15,8 @@ import sys
 load_dotenv()
 
 TOKEN = os.getenv("token")
-answer_channel = os.getenv("channelid")
+answer_channel : int = os.getenv("channelid")
+channel_20 : int = os.getenv("channelid2")
 
 intents = discord.Intents.default()
 intents.members = True
@@ -97,15 +98,20 @@ async def on_command_error(ctx, error):
 @client.command(aliases=['thanossnap'])
 async def eventstart(ctx):
     id_list = await util.UtilMethods.json_retriever('utils/id_data.json')
+    channel_lvl = client.get_channel(int(channel_20))
     for id in id_list:
         await client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=False)
+    await channel_lvl.set_permissions(ctx.guild.get_role(942240986103443506), view_channel=False)
 
 @commands.check(util.UtilMethods.is_user)
 @client.command()
 async def eventend(ctx):
     id_list = await util.UtilMethods.json_retriever('utils/id_data.json')
+    channel_lvl = client.get_channel(int(channel_20))
     for id in id_list:
         await client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=True)
+    await channel_lvl.set_permissions(ctx.guild.get_role(942240986103443506), view_channel=True)
+
 
 class Menu(View):
 
