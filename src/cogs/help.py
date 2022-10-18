@@ -42,8 +42,7 @@ class Help(commands.Cog):
         self.bot = bot
 
     @commands.hybrid_command(name='help', with_app_command=True)
-    # @commands.bot_has_permissions(add_reactions=True,embed_links=True)
-    async def help(self, ctx, *input : Optional[str]):
+    async def help(self, ctx, input : Optional[str] = None):
         """Shows all modules of that bot"""
 
         # !SET THOSE VARIABLES TO MAKE THE COG FUNCTIONAL!
