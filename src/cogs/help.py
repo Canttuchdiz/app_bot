@@ -1,4 +1,4 @@
-from src import *
+from src.imports import *
 from discord.errors import Forbidden
 from typing import Optional
 

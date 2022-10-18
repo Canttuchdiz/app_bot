@@ -1,4 +1,4 @@
-from src import *
+from src.imports import *
 
 class Interactions(commands.Cog):
     def __init__(self, bot):
