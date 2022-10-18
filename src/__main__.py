@@ -16,7 +16,7 @@ class Bot(commands.Bot):
     # Initializes needed data
     def __init__(self):
         super().__init__(command_prefix='!', intents=intents)
-        self.initial_extentsions = ['cogs.events', 'cogs.easter_eggs', 'cogs.commands', 'cogs.interactions', 'cogs.help']
+        self.initial_extentsions = ['src.cogs.events', 'src.cogs.easter_eggs', 'src.cogs.commands', 'src.cogs.interactions', 'src.cogs.help']
 
     # Loading all cogs
     async def setup_hook(self):

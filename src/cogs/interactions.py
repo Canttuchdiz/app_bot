@@ -8,7 +8,7 @@ class Interactions(commands.Cog):
     # Then data is returned
     async def user_callback(self, user: discord.Member):
 
-        data = await util.UtilMethods.json_retriever('utils/quest_ans.json')
+        data = await UtilMethods.json_retriever('utils/quest_ans.json')
         answers = []
         for i in range(len(data) - 1):
             em = discord.Embed(color=discord.Color.red())
