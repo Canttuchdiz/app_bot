@@ -2,6 +2,9 @@ from src import *
 
 
 class Events(commands.Cog):
+    """
+    Handles events, and encapsulates two event commands.
+    """
 
     def __init__(self, bot):
         self.client = bot
@@ -16,10 +19,15 @@ class Events(commands.Cog):
         await self.client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="Cube Incorporation"), status=discord.Status.do_not_disturb)
 
     # Gets a list of the channels in a json to iterate through. Prevent users from viewing them and Lvl 20 from specific channel
-    @commands.check(util.UtilMethods.is_user)
+    @commands.check(UtilMethods.is_user)
     @commands.command(aliases=['thanossnap'])
     async def eventstart(self, ctx):
-        id_list = await util.UtilMethods.json_retriever('utils/id_data.json')
+        """
+        Makes member channels invisible for event
+        :param ctx:
+        :return:
+        """
+        id_list = await UtilMethods.json_retriever('utils/id_data.json')
         channel_lvl = self.client.get_channel(int(self.channel_20))
         for id in id_list:
             await self.client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=False)
@@ -27,10 +35,15 @@ class Events(commands.Cog):
 
 
     #Ends the event above doing the opposite
-    @commands.check(util.UtilMethods.is_user)
+    @commands.check(UtilMethods.is_user)
     @commands.command()
     async def eventend(self, ctx):
-        id_list = await util.UtilMethods.json_retriever('utils/id_data.json')
+        """
+        Makes member channels visible after event
+        :param ctx:
+        :return:
+        """
+        id_list = await UtilMethods.json_retriever('utils/id_data.json')
         channel_lvl = self.client.get_channel(int(self.channel_20))
         for id in id_list:
             await self.client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=True)

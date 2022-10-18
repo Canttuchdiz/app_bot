@@ -41,10 +41,12 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command(name='help', with_app_command=True)
-    async def help(self, ctx, input : Optional[str] = None):
-        """Shows all modules of that bot"""
+    @commands.hybrid_command(name='info', with_app_command=True)
+    async def info(self, ctx, input : Optional[str] = ''):
+        """Helps showing commands and command descriptions."""
+        input = input.split()
 
+        separator = ', '
         # !SET THOSE VARIABLES TO MAKE THE COG FUNCTIONAL!
         prefix = '!'  # ENTER YOUR PREFIX - loaded from config, as string or how ever you want!
         version = '0.1.0' # enter version of your code
@@ -105,13 +107,15 @@ class Help(commands.Cog):
                     # making title - getting description from doc-string below class
                     emb = discord.Embed(title=f'{cog} - Commands', description=self.bot.cogs[cog].__doc__,
                                         color=discord.Color.green())
-
+                    cog_commands = self.bot.get_cog(cog).get_commands()
                     # getting commands from cog
-                    for command in self.bot.get_cog(cog).get_commands():
+                    for command in cog_commands:
+                        command_list = []
                         # if cog is not hidden
-                        if not command.hidden:
-                            emb.add_field(name=f"`{prefix}{command.name}`", value=command.help, inline=False)
-                    # found cog - breaking loop
+                        if command.aliases:
+                            command_list.append(separator.join(command.aliases))
+                        command_list.append(command.name)
+                        emb.add_field(name=f"`{prefix}{command_list}`", value=command.help, inline=False)
                     break
 
             # if input not found

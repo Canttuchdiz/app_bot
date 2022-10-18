@@ -1,6 +1,11 @@
 from src import *
 
 class Eggs(commands.Cog):
+
+    """
+    Fun easter egg commands.
+    """
+
     def __init__(self, bot):
         self.client = bot
 
@@ -8,15 +13,30 @@ class Eggs(commands.Cog):
 
     @commands.command(aliases=['dio'])
     async def world(self, ctx):
+        """
+        Tells information about Dio's The World!
+        :param ctx:
+        :return:
+        """
         await ctx.send("ZA WARUDO! TOKI WA TOMARE! ||Naruto and Sasuke obliterate Dio + Goku||")
 
     @commands.command()
     async def dm(self, ctx):
+        """
+        Sends instructions how to open dms.
+        :param ctx:
+        :return:
+        """
         await ctx.reply('https://www.youtube.com/watch?v=Jmq91taUy-A')
 
-    @commands.check(util.UtilMethods.is_user)
+    @commands.check(UtilMethods.is_user)
     @commands.command()
     async def fart(self, ctx):
+        """
+        Funny test command.
+        :param ctx:
+        :return:
+        """
         await ctx.send("HAHAHAH THAT WAS FUNNY")
 
 

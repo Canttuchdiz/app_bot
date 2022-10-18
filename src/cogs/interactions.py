@@ -1,6 +1,9 @@
 from src import *
 
 class Interactions(commands.Cog):
+
+    """Handles interaction based commands like buttons."""
+
     def __init__(self, bot):
         self.client = bot
 
@@ -24,9 +27,14 @@ class Interactions(commands.Cog):
 
 
     # Calls the view containg the button.
-    @commands.check_any(commands.check(util.UtilMethods.is_user), commands.has_role("Senior Staff Team"), commands.is_owner())
+    @commands.check_any(commands.check(UtilMethods.is_user), commands.has_role("Senior Staff Team"), commands.is_owner())
     @commands.command(aliases=['button', 'apps'])
     async def menu(self, ctx):
+        """
+        Sends button, which is pressed for mod apps.
+        :param ctx:
+        :return:
+        """
         view = Menu(self)
         await ctx.send(view=view)
 # The class containing the button.

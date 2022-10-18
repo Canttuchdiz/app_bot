@@ -3,6 +3,11 @@ from typing import *
 from discord.ext.commands import *
 
 class Commands(commands.Cog):
+
+    """
+    Arbitrary commands, ranging from little to high importance.
+    """
+
     def __init__(self, bot):
         self.client = bot
 
