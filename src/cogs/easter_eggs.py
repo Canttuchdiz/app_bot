@@ -1,4 +1,4 @@
-from src.imports import *
+from src import *
 
 class Eggs(commands.Cog):
     def __init__(self, bot):
