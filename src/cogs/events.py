@@ -1,4 +1,4 @@
-from src.imports import *
+from src import *
 
 
 class Events(commands.Cog):

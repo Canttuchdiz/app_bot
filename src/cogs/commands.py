@@ -1,4 +1,4 @@
-from src.imports import *
+from src import *
 from typing import *
 from discord.ext.commands import *
 
