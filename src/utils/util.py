@@ -13,5 +13,5 @@ class UtilMethods:
     @staticmethod
     def json_retriever(path: str):
         with aiofiles.open(path, encoding='utf-8') as f:
-            content = await f.read()
+            content = f.read()
             return json.loads(content)
