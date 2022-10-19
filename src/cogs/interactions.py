@@ -1,4 +1,5 @@
 from src import *
+from src.utils import UtilMethods, UTILS_DIR
 
 class Interactions(commands.Cog):
 
@@ -11,7 +12,7 @@ class Interactions(commands.Cog):
     # Then data is returned
     async def user_callback(self, user: discord.Member):
 
-        data = await UtilMethods.json_retriever('utils/quest_ans.json')
+        data = UtilMethods.json_retriever(UTILS_DIR / "quest_ans.json")
         answers = []
         for i in range(len(data) - 1):
             em = discord.Embed(color=discord.Color.red())

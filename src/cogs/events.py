@@ -1,10 +1,12 @@
 from src import *
+from src.utils import UtilMethods, UTILS_DIR
 
 
 class Events(commands.Cog):
     """
     Handles events, and encapsulates two event commands.
     """
+
 
     def __init__(self, bot):
         self.client = bot
@@ -27,7 +29,7 @@ class Events(commands.Cog):
         :param ctx:
         :return:
         """
-        id_list = await UtilMethods.json_retriever('utils/id_data.json')
+        id_list = UtilMethods.json_retriever(UTILS_DIR / 'id_data.json')
         channel_lvl = self.client.get_channel(int(self.channel_20))
         for id in id_list:
             await self.client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=False)
@@ -43,7 +45,7 @@ class Events(commands.Cog):
         :param ctx:
         :return:
         """
-        id_list = await UtilMethods.json_retriever('utils/id_data.json')
+        id_list = UtilMethods.json_retriever(UTILS_DIR / 'id_data.json')
         channel_lvl = self.client.get_channel(int(self.channel_20))
         for id in id_list:
             await self.client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=True)
