@@ -14,16 +14,30 @@ class Interactions(commands.Cog):
 
         data = UtilMethods.json_retriever(UTILS_DIR / "quest_ans.json")
         answers = []
-        for i in range(len(data) - 1):
+        length = len(data) - 1
+
+        for i in range(length):
+
             em = discord.Embed(color=discord.Color.red())
             em.add_field(name=f"Question {i + 1}", value=data[i])
+            em.set_footer(text="Type **cancel** to cancel application.")
             response = await user.send(embed=em)
             msg = await self.client.wait_for('message', check=lambda m: m.author == user and m.channel == user.dm_channel)
             answers.append(msg.content)
+            if "close" in answers:
+                await user.send("Application successfully closed!")
+                return
         fem = discord.Embed(color=discord.Color.green())
-        fem.add_field(name="Congratulations!", value=data[len(data) - 1])
+        fem.add_field(name="Congratulations!", value=data[length])
+        print(answers, len(answers))
+        lowered_response = answers[len(answers) - 1]
+        if lowered_response == "submit":
+            pass
+        else:
+            await user.send("Closed! C ya :wave:.")
         await user.send(embed=fem)
         return answers
+
 
 
 
@@ -56,11 +70,13 @@ class Menu(View):
         await interaction.response.send_message("Application sent to your dms :)", ephemeral=True)
         channel = client.get_channel(int(self.answer_channel))
         answer_data = await self.instance.user_callback(interaction.user)
-        em = discord.Embed(color=discord.Color.blue(), title="Mod Apps", description=f"User {interaction.user} ({interaction.user.id})")
-        for i in range(len(answer_data)):
-            em.add_field(name=f"Question {i}", value=answer_data[i])
-        await channel.send(embed=em)
-
+        try:
+            em = discord.Embed(color=discord.Color.blue(), title="Mod Apps", description=f"User {interaction.user} ({interaction.user.id})")
+            for i in range(len(answer_data)):
+                em.add_field(name=f"Question {i}", value=answer_data[i])
+            await channel.send(embed=em)
+        except Exception as e:
+            pass
 
 async def setup(bot):
     await bot.add_cog(Interactions(bot))
