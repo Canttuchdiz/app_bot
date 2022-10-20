@@ -30,9 +30,13 @@ class Events(commands.Cog):
         :param ctx:
         :return:
         """
+
         channel_lvl = self.client.get_channel(int(self.channel_20))
         for id in self.id_list:
-            await self.client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=False)
+            try:
+                await self.client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=False)
+            except Exception as e:
+                await ctx.send(f"Certain channel could not be retrieved. Error:```{id} does not retrieve channel.```")
         await channel_lvl.set_permissions(ctx.guild.get_role(942240986103443506), view_channel=False)
 
 
@@ -47,7 +51,10 @@ class Events(commands.Cog):
         """
         channel_lvl = self.client.get_channel(int(self.channel_20))
         for id in self.id_list:
-            await self.client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=True)
+            try:
+                await self.client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=True)
+            except Exception as e:
+                await ctx.send(f"Certain channel could not be retrieved. Error:```{id} does not retrieve channel.```")
         await channel_lvl.set_permissions(ctx.guild.get_role(942240986103443506), view_channel=True)
 
     #Excepts errors, handles them accordingly, and sends new exceptions to stderr for the interpreter to print out.
