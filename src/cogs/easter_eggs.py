@@ -9,7 +9,6 @@ class Eggs(commands.Cog):
 
     def __init__(self, bot):
         self.client = bot
-        self.audio = discord.File(UTILS_DIR / 'time.mp3')
 
     #Contain fun easter egg commands, which only send messages to the channel where the comamnd is called.
 
@@ -20,7 +19,8 @@ class Eggs(commands.Cog):
         :param ctx:
         :return:
         """
-        await ctx.send("ZA WARUDO! TOKI WA TOMARE!", file=self.audio)
+        file = discord.File(fp=UTILS_DIR / 'time.mp3', filename="TS")
+        await ctx.send("ZA WARUDO! TOKI WA TOMARE!", file=file)
 
     @commands.command()
     async def dm(self, ctx):
