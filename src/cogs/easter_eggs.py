@@ -1,4 +1,5 @@
 from src import *
+from src.utils.resources import UTILS_DIR
 
 class Eggs(commands.Cog):
 
@@ -8,7 +9,7 @@ class Eggs(commands.Cog):
 
     def __init__(self, bot):
         self.client = bot
-        self.audio = discord.File(r'c:\Users\hgold\PycharmProjects\bot_app\src\utils\resources\time.mp3')
+        self.audio = discord.File(UTILS_DIR / 'time.mp3')
 
     #Contain fun easter egg commands, which only send messages to the channel where the comamnd is called.
 
