@@ -11,6 +11,7 @@ class Events(commands.Cog):
     def __init__(self, bot):
         self.client = bot
         self.channel_20: int = int(os.getenv("channelid2"))
+        self.id_list = UtilMethods.json_retriever(UTILS_DIR / 'id_data.json')
 
     # Sets up do not disturb and it's "Listening to Cube"
     @commands.Cog.listener()
@@ -22,32 +23,30 @@ class Events(commands.Cog):
 
     # Gets a list of the channels in a json to iterate through. Prevent users from viewing them and Lvl 20 from specific channel
     @commands.check(UtilMethods.is_user)
-    @commands.command(aliases=['thanossnap'])
+    @commands.hybrid_command(name='eventstart', with_app_command=True)
     async def eventstart(self, ctx):
         """
         Makes member channels invisible for event
         :param ctx:
         :return:
         """
-        id_list = UtilMethods.json_retriever(UTILS_DIR / 'id_data.json')
         channel_lvl = self.client.get_channel(int(self.channel_20))
-        for id in id_list:
+        for id in self.id_list:
             await self.client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=False)
         await channel_lvl.set_permissions(ctx.guild.get_role(942240986103443506), view_channel=False)
 
 
     #Ends the event above doing the opposite
     @commands.check(UtilMethods.is_user)
-    @commands.command()
+    @commands.hybrid_command(name='eventend', with_app_command=True)
     async def eventend(self, ctx):
         """
         Makes member channels visible after event
         :param ctx:
         :return:
         """
-        id_list = UtilMethods.json_retriever(UTILS_DIR / 'id_data.json')
         channel_lvl = self.client.get_channel(int(self.channel_20))
-        for id in id_list:
+        for id in self.id_list:
             await self.client.get_channel(id).set_permissions(ctx.guild.default_role, view_channel=True)
         await channel_lvl.set_permissions(ctx.guild.get_role(942240986103443506), view_channel=True)
 

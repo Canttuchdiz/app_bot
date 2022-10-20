@@ -15,3 +15,4 @@ class UtilMethods:
         with open(path, encoding='utf-8') as f:
             content = f.read()
             return json.loads(content)
+
