@@ -12,29 +12,37 @@ class Interactions(commands.Cog):
     # Then data is returned
     async def user_callback(self, user: discord.Member):
 
+        """
+        Is the kinda callback used for getting application data.
+        :param user:
+        :return:
+        """
+        # Initializes some variables
         data = UtilMethods.json_retriever(UTILS_DIR / "quest_ans.json")
         answers = []
         length = len(data) - 1
 
+        # Gets messages for application
         for i in range(length):
 
             em = discord.Embed(color=discord.Color.red())
             em.add_field(name=f"Question {i + 1}", value=data[i])
             em.set_footer(text="Type **cancel** to cancel application.")
-            response = await user.send(embed=em)
+            await user.send(embed=em)
+
             msg = await self.client.wait_for('message', check=lambda m: m.author == user and m.channel == user.dm_channel)
             answers.append(msg.content)
-            if "close" in answers:
+            if "cancel" in answers:
                 await user.send("Application successfully closed!")
                 return
+
         fem = discord.Embed(color=discord.Color.green())
         fem.add_field(name="Congratulations!", value=data[length])
-        print(answers, len(answers))
+
         lowered_response = answers[len(answers) - 1]
-        if lowered_response == "submit":
-            pass
-        else:
-            await user.send("Closed! C ya :wave:.")
+        if lowered_response != "submit":
+            await user.send("Closed! C ya :wave:")
+            return
         await user.send(embed=fem)
         return answers
 
