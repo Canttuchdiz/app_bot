@@ -1,5 +1,6 @@
 from src import *
 from src.utils import UtilMethods, UTILS_DIR
+from src.utils.tools import EasySqlite
 
 class Interactions(commands.Cog):
 
@@ -7,6 +8,9 @@ class Interactions(commands.Cog):
 
     def __init__(self, bot):
         self.client = bot
+        self.table_name = "blacklist"
+        self.connection = EasySqlite("data")
+        self.connection.create_table(self.table_name, "ID", "Username")
 
     # Not necessarily a callback, but handles posting questions, and receiving user input data from dms
     # Then data is returned
@@ -31,7 +35,7 @@ class Interactions(commands.Cog):
             await user.send(embed=em)
 
             msg = await self.client.wait_for('message', check=lambda m: m.author == user and m.channel == user.dm_channel)
-            answers.append(msg.content)
+            answers.append(msg.content.lower())
             if "cancel" in answers:
                 await user.send("Application successfully closed!")
                 return
@@ -43,8 +47,21 @@ class Interactions(commands.Cog):
         if lowered_response != "submit":
             await user.send("Closed! C ya :wave:")
             return
+        self.connection.add_user(str(user.id), user.name, self.table_name)
         await user.send(embed=fem)
         return answers
+
+    @commands.check(UtilMethods.is_user)
+    @commands.hybrid_command(name='blacklist', with_app_command=True)
+    async def blacklist(self, ctx, user : discord.Member):
+        if not user:
+            await ctx.send("Input a valid user.")
+            return
+        value = self.connection.user_check(str(user.id), self.table_name)
+
+        if not value:
+            self.connection.add_user(str(user.id), user.name, self.table_name)
+            await ctx.send(f"{user.name} was blacklisted :sad:")
 
 
 
@@ -69,6 +86,13 @@ class Menu(View):
         self.answer_channel: int = int(os.getenv("channelid"))
         self.value = None
         self.instance = instance
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        value = self.instance.connection.user_check(str(interaction.user.id), "blacklist")
+        print(value)
+        if value:
+            await interaction.response.send_message("You have already applied or are blacklisted.", ephemeral=True)
+        return not value
 
     # Creates the button, and takes data from user_callback to send to channel in embed format
     # Takes in instance of cog class to retrieve certain data

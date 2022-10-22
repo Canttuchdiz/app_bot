@@ -3,13 +3,10 @@ import sqlite3
 from functools import cached_property
 
 
-con = sqlite3.connect("test.db")
-cur = con.cursor()
-@cached_property
-def data():
-    print("ya")
 
-instance = EasySqlite(cur)
-instance.create_table("trees", "items", "things", "sports")
+instance = EasySqlite("user_data")
+# instance.add_user("3123123", "Baka", "mod_list")
+# instance.create_table("mod_list", "ID", "Username")
+value = instance.user_check("520741459478052886", "mod_list")
 
-
+print(value)
