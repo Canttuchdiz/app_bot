@@ -31,7 +31,7 @@ class Interactions(commands.Cog):
 
             em = discord.Embed(color=discord.Color.red())
             em.add_field(name=f"Question {i + 1}", value=data[i])
-            em.set_footer(text="Type **cancel** to cancel application.")
+            em.set_footer(text="Type cancel to cancel application.")
             await user.send(embed=em)
 
             msg = await self.client.wait_for('message', check=lambda m: m.author == user and m.channel == user.dm_channel)
@@ -54,14 +54,13 @@ class Interactions(commands.Cog):
     @commands.check(UtilMethods.is_user)
     @commands.hybrid_command(name='blacklist', with_app_command=True)
     async def blacklist(self, ctx, user : discord.Member):
-        if not user:
-            await ctx.send("Input a valid user.")
-            return
         value = self.connection.user_check(str(user.id), self.table_name)
 
         if not value:
             self.connection.add_user(str(user.id), user.name, self.table_name)
-            await ctx.send(f"{user.name} was blacklisted :sad:")
+            await ctx.send(f"{user.name} was blacklisted")
+            return
+        await ctx.send(f"{user.name} is already blacklisted.")
 
 
 
