@@ -57,6 +57,10 @@ class Events(commands.Cog):
                 await ctx.send(f"Certain channel could not be retrieved. Error:```{id} does not retrieve channel.```")
         await channel_lvl.set_permissions(ctx.guild.get_role(942240986103443506), view_channel=True)
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        print(message.attachments[0])
+
     #Excepts errors, handles them accordingly, and sends new exceptions to stderr for the interpreter to print out.
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
