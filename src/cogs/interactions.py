@@ -22,7 +22,7 @@ class Interactions(commands.Cog):
         :return:
         """
         # Initializes some variables
-        data = UtilMethods.json_retriever(UTILS_DIR / "quest_ans.json")
+        data = UtilMethods.json_retriever(UTILS_DIR / "tools/jsons/id_data.json")
         answers = []
         length = len(data) - 1
 
@@ -54,6 +54,14 @@ class Interactions(commands.Cog):
     @commands.check(UtilMethods.is_user)
     @commands.hybrid_command(name='blacklist', with_app_command=True)
     async def blacklist(self, ctx, user : discord.Member):
+
+        """
+        Blacklists the mentioned user.
+        :param ctx:
+        :param user:
+        :return:
+        """
+
         value = self.connection.user_check(str(user.id), self.table_name)
 
         if not value:

@@ -19,7 +19,7 @@ class Eggs(commands.Cog):
         :param ctx:
         :return:
         """
-        file = discord.File(fp=UTILS_DIR / 'time.mp3', filename="TS")
+        file = discord.File(fp=UTILS_DIR / 'time.mp3', filename="time.mp3")
         await ctx.send("ZA WARUDO! TOKI WA TOMARE!", file=file)
 
     @commands.command()

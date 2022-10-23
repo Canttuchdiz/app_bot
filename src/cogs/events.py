@@ -11,7 +11,7 @@ class Events(commands.Cog):
     def __init__(self, bot):
         self.client = bot
         self.channel_20: int = int(os.getenv("channelid2"))
-        self.id_list = UtilMethods.json_retriever(UTILS_DIR / 'id_data.json')
+        self.id_list = UtilMethods.json_retriever(UTILS_DIR / 'tools/jsons/id_data.json')
 
     # Sets up do not disturb and it's "Listening to Cube"
     @commands.Cog.listener()

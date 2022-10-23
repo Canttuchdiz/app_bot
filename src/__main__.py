@@ -1,5 +1,8 @@
 from .imports import *
+from src.utils import UtilMethods
+from pathlib import Path
 
+MY_DIR = Path(__file__).parent
 
 load_dotenv()
 
@@ -17,16 +20,37 @@ class Bot(commands.Bot):
     # Initializes needed data
     def __init__(self):
         super().__init__(command_prefix='!', intents=intents)
-        self.initial_extentsions = ['src.cogs.events', 'src.cogs.easter_eggs', 'src.cogs.commands', 'src.cogs.interactions', 'src.cogs.help']
 
     # Loading all cogs
     async def setup_hook(self):
-        for extentsions in self.initial_extentsions:
-            await self.load_extension(extentsions)
+        for filename in os.listdir(MY_DIR / "cogs"):
+            if os.path.isfile(os.path.join(MY_DIR / "cogs", filename)):
+
+                try:
+                    if filename.endswith(".py"):
+                        cog = f"src.cogs.{filename[:-3]}"
+                        await self.load_extension(cog)
+                except Exception as e:
+                    print(f"Failed to load cog {filename}")
+                    print(e)
+
+
+
 
 # Creates instance of the bot and then runs it
 client = Bot()
 
 client.remove_command('help')
+
+
+@commands.check(UtilMethods.is_user)
+@client.command()
+async def reload(ctx, cog_name):
+    """Reloads a cog"""
+    try:
+        await client.reload_extension(f"src.cogs.{cog_name}")
+        await ctx.send(f"Reloaded cog: {cog_name}")
+    except Exception as e:
+        await ctx.send(f"Error: {e}")
 
 client.run(TOKEN)
