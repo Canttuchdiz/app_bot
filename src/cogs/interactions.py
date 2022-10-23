@@ -22,7 +22,7 @@ class Interactions(commands.Cog):
         :return:
         """
         # Initializes some variables
-        data = UtilMethods.json_retriever(UTILS_DIR / "tools/jsons/id_data.json")
+        data = UtilMethods.json_retriever(UTILS_DIR / "tools/jsons/quest_ans.json")
         answers = []
         length = len(data) - 1
 
