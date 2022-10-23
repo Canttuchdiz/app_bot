@@ -12,6 +12,8 @@ python = "^3.9"
 [tool.poetry.group.dev.dependencies]
 "discord.py" = "^2.0.1"
 dotenv = "^0.0.5"
+"pytesseract" = "0.3.10"
+"opencv-python" = "4.6.0.66"
 
 [build-system]
 requires = ["poetry-core"]

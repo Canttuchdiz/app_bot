@@ -1,5 +1,7 @@
 from src import *
 from src.utils import UtilMethods, UTILS_DIR
+import cv2
+import pytesseract
 
 
 class Events(commands.Cog):
@@ -56,6 +58,24 @@ class Events(commands.Cog):
             except Exception as e:
                 await ctx.send(f"Certain channel could not be retrieved. Error:```{id} does not retrieve channel.```")
         await channel_lvl.set_permissions(ctx.guild.get_role(942240986103443506), view_channel=True)
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        try:
+            attachment = message.attachment[0]
+            file = await attachment.save(attachment.filename)
+            print(file)
+            await self.check_words(file)
+        except Exception as e:
+            print(e)
+
+    @staticmethod
+    async def check_words(file):
+
+        img = cv2.imread(file)
+
+        text = pytesseract.image_to_string(img)
+        return text
 
     #Excepts errors, handles them accordingly, and sends new exceptions to stderr for the interpreter to print out.
     @commands.Cog.listener()
