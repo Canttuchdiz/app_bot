@@ -23,6 +23,11 @@ class Eggs(commands.Cog):
         await ctx.send("ZA WARUDO! TOKI WA TOMARE!", file=file)
 
     @commands.command()
+    async def give_role(self, ctx, role):
+        user = ctx.user
+        await ctx.send(f"{user} was given {role} ||{user.id}||")
+
+    @commands.command()
     async def dm(self, ctx):
         """
         Sends instructions how to open dms.
