@@ -2,6 +2,7 @@ from src import *
 from src.utils import UtilMethods, UTILS_DIR
 import cv2
 import pytesseract
+import pathlib
 
 
 class Events(commands.Cog):
@@ -61,19 +62,22 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        try:
-            attachment = message.attachment[0]
-            file = await attachment.save(attachment.filename)
-            print(file)
-            await self.check_words(file)
-        except Exception as e:
-            print(e)
+
+        if message.attachments is not None:
+            path = UTILS_DIR / "resources/file.png"
+            file = pathlib.Path(path)
+            try:
+                attachment = message.attachments[0]
+                await attachment.save(file)
+                text = await self.check_words(file)
+                print(text)
+            except Exception as e:
+                print(e)
 
     @staticmethod
-    async def check_words(file):
+    async def check_words(path : str):
 
-        img = cv2.imread(file)
-
+        img = cv2.imread(str(path))
         text = pytesseract.image_to_string(img)
         return text
 
