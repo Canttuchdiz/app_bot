@@ -15,6 +15,7 @@ class Events(commands.Cog):
         self.client = bot
         self.channel_20: int = int(os.getenv("channelid2"))
         self.id_list = UtilMethods.json_retriever(UTILS_DIR / 'tools/jsons/id_data.json')
+        self.curse_list = UtilMethods.json_retriever(UTILS_DIR / 'tools/jsons/curse.json')
 
     # Sets up do not disturb and it's "Listening to Cube"
     @commands.Cog.listener()
@@ -66,13 +67,16 @@ class Events(commands.Cog):
         if message.attachments is not None:
             path = UTILS_DIR / "resources/file.png"
             file = pathlib.Path(path)
-            try:
-                attachment = message.attachments[0]
+            for attachment in message.attachments:
                 await attachment.save(file)
-                text = await self.check_words(file)
-                print(text)
-            except Exception as e:
-                print(e)
+                try:
+                    text = await self.check_words(file)
+                    if any(curse in text.lower() for curse in self.curse_list):
+                        await message.delete()
+                        await message.channel.send("Don't say that language. This may be seen as a bypass.")
+                except Exception as e:
+                    await message.channel.send(e)
+
 
     @staticmethod
     async def check_words(path : str):
