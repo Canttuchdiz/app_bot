@@ -34,7 +34,7 @@ class Eggs(commands.Cog):
         if not ignores:
             return
 
-        for key, value in ignores:
+        for key, value in ignores.items():
             if key == user.name:
                 await ctx.send(', '.join(f"{key} ignored {value}"))
 
