@@ -9,6 +9,7 @@ class Eggs(commands.Cog):
 
     def __init__(self, bot):
         self.client = bot
+        self.ignores = {}
 
     #Contain fun easter egg commands, which only send messages to the channel where the comamnd is called.
 
@@ -21,6 +22,16 @@ class Eggs(commands.Cog):
         """
         file = discord.File(fp=UTILS_DIR / 'time.mp3', filename="time.mp3")
         await ctx.send("ZA WARUDO! TOKI WA TOMARE!", file=file)
+
+    @commands.command()
+    async def ignore(self, ctx : commands.Context, user : discord.Member):
+        self.ignores[user.name] = ctx.author.name
+        await ctx.send("Ignore was indexed.")
+
+    @commands.command()
+    async def ignores(self, ctx):
+        for key, value in self.ignores:
+            await ctx.send(', '.join(f"{key} ignored {value}"))
 
     @commands.command()
     async def give_role(self, ctx, role):
