@@ -29,9 +29,10 @@ class Eggs(commands.Cog):
         await ctx.send("Ignore was indexed.")
 
     @commands.command()
-    async def ignores(self, ctx):
+    async def ignores(self, ctx, user : discord.Member):
         for key, value in self.ignores:
-            await ctx.send(', '.join(f"{key} ignored {value}"))
+            if key == user.name:
+                await ctx.send(', '.join(f"{key} ignored {value}"))
 
     @commands.command()
     async def give_role(self, ctx, role):
