@@ -30,7 +30,11 @@ class Eggs(commands.Cog):
 
     @commands.command()
     async def ignores(self, ctx, user : discord.Member):
-        for key, value in self.ignores:
+        ignores = self.ignores
+        if not ignores:
+            return
+
+        for key, value in ignores:
             if key == user.name:
                 await ctx.send(', '.join(f"{key} ignored {value}"))
 
