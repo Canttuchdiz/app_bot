@@ -23,8 +23,17 @@ class Eggs(commands.Cog):
         file = discord.File(fp=UTILS_DIR / 'time.mp3', filename="time.mp3")
         await ctx.send("ZA WARUDO! TOKI WA TOMARE!", file=file)
 
-    @commands.command()
-    async def ignore(self, ctx : commands.Context, user : discord.Member):
+    @commands.hybrid_command(name='ignored_me', with_app_command=True)
+    async def ignored_me(self, ctx : commands.Context, user : discord.Member):
+
+        """
+        If someone ignores you, you can do !ignored_me @user to keep them accountable,
+        and to log their ignore.
+        :param ctx:
+        :param user:
+        :return:
+        """
+
         try:
             self.ignores[user.name].append(ctx.author.name)
         except KeyError:
@@ -44,8 +53,16 @@ class Eggs(commands.Cog):
                     message_list.append(f"{key} ignored {values}")
         return message_list
 
-    @commands.command()
+    @commands.hybrid_command(name='ignores', with_app_command=True)
     async def ignores(self, ctx, user : discord.Member):
+
+        """
+        If you do !ignores @user, you can see the people that @user has ignored.
+        :param ctx:
+        :param user:
+        :return:
+        """
+
         data = await self.ignore_retriever(ctx, user)
         if not data:
             emb = discord.Embed(color=discord.Color.blue(), title="User doesn't have any ignores.")
