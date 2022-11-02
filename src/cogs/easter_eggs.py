@@ -25,18 +25,35 @@ class Eggs(commands.Cog):
 
     @commands.command()
     async def ignore(self, ctx : commands.Context, user : discord.Member):
-        self.ignores[user.name] = ctx.author.name
+        try:
+            self.ignores[user.name].append(ctx.author.name)
+        except KeyError:
+            self.ignores[user.name] = ctx.author.name
+
         await ctx.send("Ignore was indexed.")
 
-    @commands.command()
-    async def ignores(self, ctx, user : discord.Member):
+    async def ignore_retriever(self, ctx, user) -> list:
         ignores = self.ignores
+        message_list = []
         if not ignores:
-            return
+            return []
 
         for key, value in ignores.items():
             if key == user.name:
-                await ctx.send(', '.join(f"{key} ignored {value}"))
+                message_list.append(f"{key} ignored {value}")
+        return message_list
+
+    @commands.command()
+    async def ignores(self, ctx, user : discord.Member):
+        data = await self.ignore_retriever(ctx, user)
+        if not data:
+            emb = discord.Embed(color=discord.Color.blue(), title="User doesn't have any ignores.")
+            await ctx.send(emb)
+            return
+
+        line = '\n'.join(data)
+        await ctx.send(line)
+
 
     @commands.command()
     async def give_role(self, ctx, role):
