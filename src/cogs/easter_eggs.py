@@ -28,7 +28,7 @@ class Eggs(commands.Cog):
         try:
             self.ignores[user.name].append(ctx.author.name)
         except KeyError:
-            self.ignores[user.name] = ctx.author.name
+            self.ignores[user.name] = [ctx.author.name]
 
         await ctx.send("Ignore was indexed.")
 
@@ -36,11 +36,12 @@ class Eggs(commands.Cog):
         ignores = self.ignores
         message_list = []
         if not ignores:
-            return []
+            return message_list
 
         for key, value in ignores.items():
             if key == user.name:
-                message_list.append(f"{key} ignored {value}")
+                for values in value:
+                    message_list.append(f"{key} ignored {values}")
         return message_list
 
     @commands.command()
