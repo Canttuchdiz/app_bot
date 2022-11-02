@@ -65,12 +65,15 @@ class Eggs(commands.Cog):
 
         data = await self.ignore_retriever(ctx, user)
         if not data:
-            emb = discord.Embed(color=discord.Color.blue(), title="User doesn't have any ignores.")
+            emb = discord.Embed(color=discord.Color.red(), title="User doesn't have any ignores.")
             await ctx.send(embed=emb)
             return
 
         line = '\n'.join(data)
-        await ctx.send(line)
+
+        emb = discord.Embed(color=discord.Color.blue(), title="User Ignore Log")
+        emb.add_field(name="Ignores", value=line)
+        await ctx.send(embed=emb)
 
 
     @commands.command()
