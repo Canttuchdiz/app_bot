@@ -1,6 +1,8 @@
 import aiofiles
 import json
 
+from .errors import VCNotDetected
+
 class UtilMethods:
 
     # Contains methods that I will use to reduce redundancy
@@ -16,3 +18,9 @@ class UtilMethods:
             content = f.read()
             return json.loads(content)
 
+
+def InVC(ctx):
+    if not ctx.author.voice:
+        raise VCNotDetected()
+
+    return True

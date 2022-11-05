@@ -2,6 +2,8 @@ from ast import alias
 import discord
 from discord.ext import commands
 
+from src.utils import InVC, UtilMethods
+
 from youtube_dl import YoutubeDL
 
 
@@ -12,6 +14,7 @@ class music(commands.Cog):
         # all the music related stuff
         self.is_playing = False
         self.is_paused = False
+        self.is_looped = False
 
         # 2d array containing [song, channel]
         self.music_queue = []
@@ -21,6 +24,8 @@ class music(commands.Cog):
 
 
         self.vc = None
+
+
 
     # searching the item on youtube
     def search_yt(self, item):
@@ -32,6 +37,18 @@ class music(commands.Cog):
 
         return {'source': info['formats'][0]['url'], 'title': info['title']}
 
+    async def base_embed(self, ctx, title, color : discord.Color):
+        embed = discord.Embed(color=color, title=title)
+        await ctx.send(embed=embed)
+
+    async def apply_volume(self, ctx : commands.Context, num : float) -> None:
+        try:
+            self.vc.source.volume = num / 100
+        except Exception as e:
+            await ctx.send("No active audio source.")
+
+
+
     def play_next(self):
         if len(self.music_queue) > 0:
             self.is_playing = True
@@ -40,9 +57,12 @@ class music(commands.Cog):
             m_url = self.music_queue[0][0]['source']
 
             # remove the first element as you are currently playing it
-            self.music_queue.pop(0)
 
-            self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
+            if not self.is_looped:
+                self.music_queue.pop(0)
+
+            self.vc.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS)), after=lambda e: self.play_next())
+            self.vc.source.volume = 50 / 100
         else:
             self.is_playing = False
 
@@ -65,13 +85,17 @@ class music(commands.Cog):
                 await self.vc.move_to(self.music_queue[0][1])
 
             # remove the first element as you are currently playing it
-            self.music_queue.pop(0)
 
-            self.vc.play(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS), after=lambda e: self.play_next())
+            if not self.is_looped:
+                self.music_queue.pop(0)
+
+            self.vc.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(m_url, **self.FFMPEG_OPTIONS)), after=lambda e: self.play_next())
+            self.vc.source.volume = 50 / 100
         else:
             self.is_playing = False
 
-    @commands.command(name="play", aliases=["p", "playing"], help="Plays a selected song from youtube")
+    @commands.check(InVC)
+    @commands.hybrid_command(name="play", aliases=["p", "playing"], help="Plays a selected song from youtube", with_app_command=True)
     async def play(self, ctx, *args):
         query = " ".join(args)
 
@@ -87,14 +111,15 @@ class music(commands.Cog):
                 await ctx.send(
                     "Could not download the song. Incorrect format try another keyword. This could be due to playlist or a livestream format.")
             else:
-                await ctx.send("Song added to the queue")
+                await self.base_embed(ctx, "Song added to the queue", discord.Color.red())
                 self.music_queue.append([song, voice_channel])
 
                 if self.is_playing == False:
                     await self.play_music(ctx)
 
-    @commands.command(name="pause", help="Pauses the current song being played")
-    async def pause(self, ctx, *args):
+    @commands.check(InVC)
+    @commands.hybrid_command(name="pause", help="Pauses the current song being played", with_app_command=True)
+    async def pause(self, ctx):
         if self.is_playing:
             self.is_playing = False
             self.is_paused = True
@@ -102,26 +127,37 @@ class music(commands.Cog):
         elif self.is_paused:
             self.is_paused = False
             self.is_playing = True
-        self.vc.resume()
+            self.vc.resume()
 
+    @commands.check(UtilMethods.is_user)
+    @commands.hybrid_command(name="loop", with_app_command=True)
+    async def loop(self, ctx):
+        self.is_looped = not self.is_looped
+        await ctx.send(f"Loop is now {self.is_looped}")
 
-    @commands.command(name="resume", aliases=["r"], help="Resumes playing with the discord bot")
+    @commands.check(InVC)
+    @commands.hybrid_command(name="resume", aliases=["r"], help="Resumes playing with the discord bot", with_app_command=True)
     async def resume(self, ctx, *args):
         if self.is_paused:
             self.is_paused = False
             self.is_playing = True
-        self.vc.resume()
+            self.vc.resume()
 
-
-    @commands.command(name="skip", aliases=["s"], help="Skips the current song being played")
+    @commands.check(InVC)
+    @commands.hybrid_command(name="skip", aliases=["s"], help="Skips the current song being played", with_app_command=True)
     async def skip(self, ctx):
         if self.vc != None and self.vc:
             self.vc.stop()
             # try to play next in the queue if it exists
             await self.play_music(ctx)
 
+    @commands.check(InVC)
+    @commands.hybrid_command(name="volume", with_app_command=True)
+    async def volume(self, ctx, num : float):
+        await self.apply_volume(ctx, num)
 
-    @commands.command(name="queue", aliases=["q"], help="Displays the current songs in queue")
+    @commands.check(InVC)
+    @commands.hybrid_command(name="queue", aliases=["q"], help="Displays the current songs in queue", with_app_command=True)
     async def queue(self, ctx):
         retval = ""
         for i in range(0, len(self.music_queue)):
@@ -134,16 +170,16 @@ class music(commands.Cog):
         else:
             await ctx.send("No music in queue")
 
-
-    @commands.command(name="clear", aliases=["c", "bin"], help="Stops the music and clears the queue")
+    @commands.check(InVC)
+    @commands.hybrid_command(name="clear", aliases=["c", "bin"], help="Stops the music and clears the queue", with_app_command=True)
     async def clear(self, ctx):
         if self.vc != None and self.is_playing:
             self.vc.stop()
         self.music_queue = []
         await ctx.send("Music queue cleared")
 
-
-    @commands.command(name="leave", aliases=["disconnect", "l", "d"], help="Kick the bot from VC")
+    @commands.check(InVC)
+    @commands.hybrid_command(name="leave", aliases=["disconnect", "l", "d"], help="Kick the bot from VC", with_app_command=True)
     async def dc(self, ctx):
         self.is_playing = False
         self.is_paused = False

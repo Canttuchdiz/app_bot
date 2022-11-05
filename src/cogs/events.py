@@ -1,5 +1,5 @@
 from src import *
-from src.utils import UtilMethods, UTILS_DIR
+from src.utils import UtilMethods, UTILS_DIR, VCNotDetected
 
 
 class Events(commands.Cog):
@@ -59,12 +59,17 @@ class Events(commands.Cog):
         await channel_lvl.set_permissions(ctx.guild.get_role(942240986103443506), view_channel=True)
 
     #Excepts errors, handles them accordingly, and sends new exceptions to stderr for the interpreter to print out.
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         ignored = (commands.CommandNotFound,)
 
         # Anything in ignored will return and prevent anything happening.
         if isinstance(error, ignored):
+            return
+
+        if isinstance(error, VCNotDetected):
+            await ctx.send(f"{ctx.author.mention} is **not** in a voice channel.")
             return
 
         if isinstance(error, commands.DisabledCommand):

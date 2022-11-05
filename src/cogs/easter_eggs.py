@@ -77,6 +77,10 @@ class Eggs(commands.Cog):
 
 
     @commands.command()
+    async def madara(self, ctx):
+        await ctx.send("Peak VILLAIN!")
+
+    @commands.command()
     async def give_role(self, ctx, role):
         user = ctx.user
         await ctx.send(f"{user} was given {role} ||{user.id}||")
