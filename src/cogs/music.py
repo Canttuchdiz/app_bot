@@ -95,7 +95,7 @@ class music(commands.Cog):
             self.is_playing = False
 
     @commands.check(InVC)
-    @commands.hybrid_command(name="play", aliases=["p", "playing"], help="Plays a selected song from youtube", with_app_command=True)
+    @commands.command(name="play", aliases=["p", "playing"], help="Plays a selected song from youtube")
     async def play(self, ctx, *args):
         query = " ".join(args)
 
@@ -137,7 +137,7 @@ class music(commands.Cog):
 
     @commands.check(InVC)
     @commands.hybrid_command(name="resume", aliases=["r"], help="Resumes playing with the discord bot", with_app_command=True)
-    async def resume(self, ctx, *args):
+    async def resume(self, ctx):
         if self.is_paused:
             self.is_paused = False
             self.is_playing = True
