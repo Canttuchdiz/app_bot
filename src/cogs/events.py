@@ -69,7 +69,7 @@ class Events(commands.Cog):
             return
 
         if isinstance(error, VCNotDetected):
-            await ctx.send(f"{ctx.author.mention} is **not** in a voice channel.")
+            await ctx.send(f"{ctx.author.mention} join a voice channel to use **music** commands.")
             return
 
         if isinstance(error, commands.DisabledCommand):
