@@ -152,7 +152,7 @@ class music(commands.Cog):
             await self.play_music(ctx)
 
     @commands.check(InVC)
-    @commands.hybrid_command(name="volume", with_app_command=True)
+    @commands.hybrid_command(name="volume", help="Changes volume of audio source", with_app_command=True)
     async def volume(self, ctx, num : float):
         await self.apply_volume(ctx, num)
 
