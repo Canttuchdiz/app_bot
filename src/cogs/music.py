@@ -65,6 +65,7 @@ class music(commands.Cog):
             self.vc.source.volume = 50 / 100
         else:
             self.is_playing = False
+           return False
 
     # infinite loop checking
     async def play_music(self, ctx):
