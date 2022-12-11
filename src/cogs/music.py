@@ -184,6 +184,3 @@ class music(commands.Cog):
         self.is_playing = False
         self.is_paused = False
         await self.vc.disconnect()
-
-async def setup(bot):
-    await bot.add_cog(music(bot))
