@@ -14,7 +14,13 @@ class Commands(commands.Cog):
     # Gets the instnace of the bot and registers a command which returns the latency of the command.
     @commands.command(aliases=['pingpong'])
     async def ping(self, ctx, *, question=None):
-        await ctx.send('Pong! {0}'.format(round(self.client.latency, 1)))
+        await ctx.send('Pong! {0}'.format(round(self.client.latency, 1)
+
+
+    @commands.command()
+    async def monkey(self, ctx):
+        await ctx.send("Bro I’m so famous suck it  monkeys (I ain’t gay but the person above me is lesbian)")                                          
+        
 
     # Shuts down bot, which can only be used by users in id_list in utils
     @commands.check(UtilMethods.is_user)
